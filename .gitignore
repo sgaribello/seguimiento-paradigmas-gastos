@@ -1,220 +1,211 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[codz]
-*$py.class
+# ============================================================
+# Sistema de Control de Gastos Personales
+# Paradigma: ESTRUCTURADO
+# Archivo: gastos_estructurado.py
+#
+# Caracteristicas del paradigma aplicadas:
+#   - Variables globales y locales
+#   - Estructuras condicionales (if / else)
+#   - Ciclos (while, for)
+#   - Funciones independientes con paso de parametros
+#   - Menu secuencial interactivo en consola
+#   - Estructuras de datos nativas (lista de diccionarios)
+#   - SIN clases personalizadas ni librerias de alto nivel
+# ============================================================
 
-# C extensions
-*.so
+# ---------- VARIABLE GLOBAL ----------
+# Lista global que almacena todos los gastos del usuario.
+# Cada gasto es un diccionario con las claves: concepto, monto, categoria.
+gastos = []
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
-# PyInstaller
-#   Usually these files are written by a python script from a template
-#   before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# ---------- FUNCIONES INDEPENDIENTES ----------
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+def registrar_gasto(lista_gastos):
+    """Solicita los datos de un gasto y lo agrega a la lista."""
+    print("\n--- REGISTRAR GASTO ---")
+    concepto = input("Concepto (descripcion): ").strip()
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py.cover
-*.lcov
-.hypothesis/
-.pytest_cache/
-cover/
+    if concepto == "":
+        print("El concepto no puede estar vacio.")
+        return
 
-# Translations
-*.mo
-*.pot
+    # Validacion del monto con un ciclo while
+    monto = 0.0
+    while True:
+        entrada = input("Monto ($): ").strip()
+        try:
+            monto = float(entrada)
+            if monto <= 0:
+                print("El monto debe ser mayor que cero.")
+                continue
+            break
+        except ValueError:
+            print("Entrada invalida. Ingrese un numero.")
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+    categoria = input(
+        "Categoria (Alimentacion/Transporte/Servicios/Entretenimiento): "
+    ).strip()
+    if categoria == "":
+        categoria = "Sin categoria"
 
-# Flask stuff:
-instance/
-.webassets-cache
+    # Se crea el diccionario y se anade a la lista nativa
+    nuevo_gasto = {
+        "concepto": concepto,
+        "monto": monto,
+        "categoria": categoria
+    }
+    lista_gastos.append(nuevo_gasto)
+    print("Gasto registrado correctamente.")
 
-# Scrapy stuff:
-.scrapy
 
-# Sphinx documentation
-docs/_build/
+def mostrar_gastos(lista_gastos):
+    """Presenta la totalidad de gastos registrados de forma organizada."""
+    print("\n--- LISTADO DE GASTOS ---")
+    if len(lista_gastos) == 0:
+        print("No hay gastos registrados.")
+        return
 
-# PyBuilder
-.pybuilder/
-target/
+    # Encabezado de la tabla
+    print(f"{'#':<4}{'CONCEPTO':<25}{'CATEGORIA':<20}{'MONTO':>12}")
+    print("-" * 61)
 
-# Jupyter Notebook
-.ipynb_checkpoints
+    # Ciclo for para recorrer la coleccion
+    for i in range(len(lista_gastos)):
+        g = lista_gastos[i]
+        print(f"{i + 1:<4}{g['concepto']:<25}{g['categoria']:<20}{g['monto']:>12.2f}")
+    print("-" * 61)
+    print(f"Total de registros: {len(lista_gastos)}")
 
-# IPython
-profile_default/
-ipython_config.py
 
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
+def calcular_total(lista_gastos):
+    """Suma el valor numerico de todos los egresos registrados."""
+    print("\n--- GASTO TOTAL ACUMULADO ---")
+    if len(lista_gastos) == 0:
+        print("No hay gastos registrados.")
+        return
 
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-# Pipfile.lock
+    # Variable local acumuladora y ciclo for explicito
+    total = 0.0
+    for g in lista_gastos:
+        total = total + g["monto"]
 
-# uv
-#   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-# uv.lock
+    print(f"Gasto total acumulado: ${total:.2f}")
 
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-# poetry.lock
-# poetry.toml
 
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#   pdm recommends including project-wide configuration in pdm.toml, but excluding .pdm-python.
-#   https://pdm-project.org/en/latest/usage/project/#working-with-version-control
-# pdm.lock
-# pdm.toml
-.pdm-python
-.pdm-build/
+def mostrar_gasto_mayor(lista_gastos):
+    """Identifica y despliega el registro con el monto mas elevado."""
+    print("\n--- GASTO DE MAYOR VALOR ---")
+    if len(lista_gastos) == 0:
+        print("No hay gastos registrados.")
+        return
 
-# pixi
-#   Similar to Pipfile.lock, it is generally recommended to include pixi.lock in version control.
-# pixi.lock
-#   Pixi creates a virtual environment in the .pixi directory, just like venv module creates one
-#   in the .venv directory. It is recommended not to include this directory in version control.
-.pixi/*
-!.pixi/config.toml
+    # Se asume el primero como mayor y se compara con el resto
+    mayor = lista_gastos[0]
+    for g in lista_gastos:
+        if g["monto"] > mayor["monto"]:
+            mayor = g
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
+    print(f"Concepto : {mayor['concepto']}")
+    print(f"Categoria: {mayor['categoria']}")
+    print(f"Monto    : ${mayor['monto']:.2f}")
 
-# Celery stuff
-celerybeat-schedule*
-celerybeat.pid
 
-# Redis
-*.rdb
-*.aof
-*.pid
+def filtrar_por_monto(lista_gastos):
+    """Lista los gastos cuyo monto supere un umbral ingresado."""
+    print("\n--- GASTOS MAYORES A UN MONTO ---")
+    if len(lista_gastos) == 0:
+        print("No hay gastos registrados.")
+        return
 
-# RabbitMQ
-mnesia/
-rabbitmq/
-rabbitmq-data/
+    umbral = 0.0
+    while True:
+        entrada = input("Mostrar gastos mayores a ($): ").strip()
+        try:
+            umbral = float(entrada)
+            break
+        except ValueError:
+            print("Entrada invalida. Ingrese un numero.")
 
-# ActiveMQ
-activemq-data/
+    # Copia local del subconjunto filtrado
+    resultados = []
+    for g in lista_gastos:
+        if g["monto"] > umbral:
+            resultados.append(g)
 
-# SageMath parsed files
-*.sage.py
+    if len(resultados) == 0:
+        print(f"No hay gastos mayores a ${umbral:.2f}.")
+    else:
+        for g in resultados:
+            print(f"- {g['concepto']} ({g['categoria']}): ${g['monto']:.2f}")
+        print(f"Cantidad de coincidencias: {len(resultados)}")
 
-# Environments
-.env
-.envrc
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
-# Spyder project settings
-.spyderproject
-.spyproject
+def buscar_por_concepto(lista_gastos):
+    """Localiza coincidencias por subcadena en el concepto."""
+    print("\n--- BUSCAR GASTO POR CONCEPTO ---")
+    if len(lista_gastos) == 0:
+        print("No hay gastos registrados.")
+        return
 
-# Rope project settings
-.ropeproject
+    palabra = input("Palabra clave a buscar: ").strip().lower()
+    if palabra == "":
+        print("Debe ingresar una palabra clave.")
+        return
 
-# mkdocs/Zensical documentation
-/site
+    # Variables locales para el resultado
+    encontrados = 0
+    for g in lista_gastos:
+        if palabra in g["concepto"].lower():
+            print(f"- {g['concepto']} ({g['categoria']}): ${g['monto']:.2f}")
+            encontrados = encontrados + 1
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+    if encontrados == 0:
+        print("No se encontraron coincidencias.")
+    else:
+        print(f"Coincidencias encontradas: {encontrados}")
 
-# Pyre type checker
-.pyre/
 
-# pytype static type analyzer
-.pytype/
+def mostrar_menu():
+    """Despliega el menu secuencial interactivo."""
+    print("\n" + "=" * 45)
+    print("   SISTEMA DE CONTROL DE GASTOS PERSONALES")
+    print("=" * 45)
+    print("1. Registrar gasto")
+    print("2. Mostrar listado de gastos")
+    print("3. Calcular gasto total acumulado")
+    print("4. Mostrar el gasto de mayor valor")
+    print("5. Mostrar gastos mayores a un monto")
+    print("6. Buscar gasto por concepto")
+    print("0. Salir")
+    print("=" * 45)
 
-# Cython debug symbols
-cython_debug/
 
-# PyCharm
-#   JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#   be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#   and can be added to the global gitignore or merged into this file.  For a more nuclear
-#   option (not recommended) you can uncomment the following to ignore the entire idea folder.
-# .idea/
+def main():
+    """Funcion principal: controla el flujo con un ciclo while."""
+    opcion = ""
+    while opcion != "0":
+        mostrar_menu()
+        opcion = input("Seleccione una opcion: ").strip()
 
-# Abstra
-#   Abstra is an AI-powered process automation framework.
-#   Ignore directories containing user credentials, local state, and settings.
-#   Learn more at https://abstra.io/docs
-.abstra/
+        if opcion == "1":
+            registrar_gasto(gastos)
+        elif opcion == "2":
+            mostrar_gastos(gastos)
+        elif opcion == "3":
+            calcular_total(gastos)
+        elif opcion == "4":
+            mostrar_gasto_mayor(gastos)
+        elif opcion == "5":
+            filtrar_por_monto(gastos)
+        elif opcion == "6":
+            buscar_por_concepto(gastos)
+        elif opcion == "0":
+            print("\nSaliendo del sistema. Hasta pronto.")
+        else:
+            print("Opcion invalida. Intente de nuevo.")
 
-# Visual Studio Code
-#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore that
-#   can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#   and can be added to the global gitignore or merged into this file. However, if you prefer, you
-#   could uncomment the following to ignore the entire vscode folder
-# .vscode/
-# Temporary file for partial code execution
-tempCodeRunnerFile.py
 
-# Ruff stuff:
-.ruff_cache/
-
-# PyPI configuration file
-.pypirc
-
-# Marimo
-marimo/_static/
-marimo/_lsp/
-__marimo__/
-
-# Streamlit
-.streamlit/secrets.toml
+# Punto de entrada del programa
+if __name__ == "__main__":
+    main()
